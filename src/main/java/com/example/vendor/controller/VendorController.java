@@ -38,7 +38,17 @@ public class VendorController {
         List<Long> vendorIdList = new ArrayList<>();
         vendorIdList.add(2L);
         vendorIdList.add(3L);
-        return getVendorConnections(vendorIdList);
+
+        // Initially fetch the Vendor Connections that are already present in the table
+        Map<Long, VendorConnection> vendorConnections = getVendorConnections(vendorIdList);
+
+        // Get a list of the missing vendor ids which is used later to create vendor connections
+        List<Long> missingVendorConnections = getMissingVendorConnections(vendorConnections, vendorIdList);
+
+        // Create a vendor connection for each vendor id and add it to the map
+        missingVendorConnections.forEach(id -> vendorConnections.put(id, createVendorConnection(id)));
+
+        return vendorConnections;
     }
 
     Map<Long, VendorConnection> getVendorConnections(List<Long> vendorIdList) {
@@ -46,6 +56,17 @@ public class VendorController {
         Map<Long, VendorConnection> connectionMap = new HashMap<>();
         vendorConnections.forEach(vendorConnection -> connectionMap.put(vendorConnection.getVendor().getId(), vendorConnection));
         return connectionMap;
+    }
+
+    List<Long> getMissingVendorConnections(Map<Long, VendorConnection> vendorConnections, List<Long> vendorIds) {
+        List<Long> missingVendorConnections = new ArrayList<>();
+        missingVendorConnections.addAll(vendorIds);
+        missingVendorConnections.removeAll(vendorConnections.keySet());
+        return missingVendorConnections;
+    }
+
+    VendorConnection createVendorConnection(Long vendorId) {
+        // Write implementation to create vendor connection and return the VendorConnection
     }
 
 }
